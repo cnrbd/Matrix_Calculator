@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"  type="text/css">
+    <title>Matrix Calculator</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 id="header"> MATRIX CALCULATOR </h1>
+        <div class="display">
+            <div class = "matrix_setting">
+            <form method = "POST" action="/make_matrix">
+                    <div>
+                        <label for="rows">Rows:</label>
+                        <input type="number" id = "rows" name = "rows" minlength="1" min="0" required>
+                        
+                        <label for="columns">Columns:</label>
+                        <input type="number" id="columns" name = "columns" minlength="1" min="0" required>
+                       
+                    </div>
+                    <button type="submit">Confirm </button>
+            </form>     
+            </div>
+            <div class="matrix_display">
+                    <p>Input Matrix:</p>
+                <form method = "POST" action="/inverse">
+                    <div>
+                        <input type="number" name = "ai_1_1" minlength="1" required>
+                        <input type="number" name = "ai_1_2" minlength="1" required>
+                        <input type="number" name = "ai_1_3" minlength="1" required>
+                    </div>
+                    <div >
+                        <input type="number" name = "ai_2_1" minlength="1" required>
+                        <input type="number" name = "ai_2_2" minlength="1" required>
+                        <input type="number" name = "ai_2_3" minlength="1" required>
+                    </div>
+                    <div>
+                        <input type="number" name = "ai_3_1" minlength="1" required>
+                        <input type="number" name = "ai_3_2" minlength="1" required>
+                        <input type="number" name = "ai_3_3" minlength="1" required>
+                    </div>
+                    <button type="submit">Calculate</button>
+                </form>
+            </div> 
+            
+            <pre>{{inverse_matrix}}</pre>
+         
+        </div>
+        
+    </div>
+</body>
+
+
+
+</html>
