@@ -63,6 +63,7 @@ def determinant_calculation(matrix):
     matrix = np.array(array_list).reshape(rows,columns)
     return (det(matrix))
 
+# function that transpose a matrix
 def transpose_calculation(matrix):
     rows = 3 
     columns = 3 
