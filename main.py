@@ -1,9 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import numpy as np
 from numpy.linalg import inv, det
+import json
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "LAMPHAM"
+
+#this function turns the byte string into a json for the server to calculate its operations
+def byte_string_to_json(byte_string):
+    decode_byte_string = byte_string.decode()
+    matrix_dict = json.loads(decode_byte_string)
+
+    return matrix_dict
 
 def inverse_calculation(matrix,rows,columns):
     # rows = 3 
@@ -11,8 +19,8 @@ def inverse_calculation(matrix,rows,columns):
     array_list =[]
 
     for i in matrix:
-        if matrix[i] != matrix["calculate"]:
-            array_list.append(int(matrix[i]))
+        array_list.append(int(matrix[i]))
+
 
     matrix = np.array(array_list).reshape(rows,columns)
     return (inv(matrix))
@@ -91,29 +99,6 @@ def make_matrix_function():
     return (render_template("inverse.html"))
     
 
-# @app.route("/inverse", methods = ["GET","POST"])
-# def inverse():
-#     request_method = request.method
-#     calculate = request.form.get("calculate")
-#     clear = request.form.get("clear")
-#     if request_method == "POST":
-#         print("POST METHOD")
-#         if calculate is not None:
-#             matrix = request.form.to_dict()
-#             print("matrix:")
-#             print(matrix)
-#             inverse_matrix = inverse_calculation(matrix,session.get("rows"),session.get("columns"))
-#             print(inverse_matrix)
-#             # print(array_to_json(inverse_matrix))
-#             return render_template("inverse.html", inverse_matrix = inverse_matrix)
-#         elif clear is not None:
-#             return render_template("inverse.html")
-#         else:
-#             return render_template("inverse.html")
-#     else:
-#         print("GET METHOD")
-#         return render_template("inverse.html")
-
 @app.route("/inverse", methods = ["GET","POST"])
 def inverse():
     if request.method == "GET":
@@ -126,12 +111,17 @@ def display_inverse():
     clear = request.form.get("clear")
     if request.method == "POST":
         print("POST METHOD")
-        matrix = request.form.to_dict()
-        print(matrix)
-        inverse_matrix = inverse_calculation(matrix,session.get("rows"),session.get("columns"))
+        matrix_form_dictionary = byte_string_to_json(request.data)
+        print(matrix_form_dictionary)
+        inverse_matrix = inverse_calculation(matrix_form_dictionary,session.get("rows"),session.get("columns"))
         print(inverse_matrix)
         inverse_json = np_array_to_json(inverse_matrix)
-        return inverse_json
+        print(jsonify(inverse_json))
+        return jsonify(inverse_json)
+    elif request.method == "GET":
+        print("GET")
+
+
 
 @app.route("/determinant", methods = ["POST"])
 def determinant():
