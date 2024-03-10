@@ -1,10 +1,6 @@
-// const { default: axios } = require("axios");
-
 const matrixDisplay = document.querySelector(".matrix_display");
 const matrixSetting = document.querySelector(".matrix_setting");
 const display = document.querySelector(".display");
-console.log("hello");
-
 
 const rows = document.getElementById("rows");
 const columns = document.getElementById("columns");
@@ -13,17 +9,37 @@ const btnClear = document.getElementById("btn-clear")
 const btnCalculateMatrix = document.getElementById("btn-calculate-matrix")
 const matrixForm = document.getElementById("matrix-form");
 const answer = document.getElementById("answer")
+const operation = document.getElementById("operation")
+
 let temp = 0;
 
-const flaskUrl = "http://127.0.0.1:5000";
 
 function createMatrix() {
-    
+
+    // clear input elements if user re-entered rows and colums 
+    // important to start loop at the end of the elements since starting from the beginning shift the DOM structure 
+    // console.log(matrixForm.elements)
+    // console.log(matrixForm.elements.length)
+    for (i = matrixForm.elements.length - 1; i > -1; i--) {
+        if (matrixForm.elements[i].tagName === "INPUT") {
+            matrixForm.elements[i].remove();
+        }
+    }
+
+    let newBreak = document.createElement("br")
+    matrixForm.appendChild(newBreak)
+
     for (i=0; i<Number(rows.value); i++){
-        let newDiv = document.createElement("div");
-        matrixForm.appendChild(newDiv);
+        let newRow = document.createElement("div");
+        newRow.classList.add("row", "mb-3");
+        matrixForm.appendChild(newRow);
+
         for (j=0; j<Number(columns.value); j++){
+            let newCol = document.createElement("div");
+            newCol.classList.add("col");
+
             let newInput = document.createElement("input");
+            newInput.classList.add("form-control");
             newInput.type = "number";
             newInput.name = `a-${i+1}-${j+1}`;
             newInput.id = `a-${i+1}-${j+1}`;
@@ -31,32 +47,26 @@ function createMatrix() {
             newInput.required = true;
             newInput.placeholder = 0
             newInput.setAttribute("form","matrix-form");
-            matrixForm.appendChild(newInput);        
+            
+            
+            newCol.appendChild(newInput);
+            newRow.appendChild(newCol);    
+
         }
     }
 }
 
 
 function clearMatrix(){
-    const matrixInputs = document.getElementById("matrix-form").elements;
-    // console.log(matrixInputs)
+    console.log ("Test")
 
-    for (var i=0; i< matrixInputs.length; i++)
-        console.log(i)
-        if (matrixInputs[i].tagName === "INPUT" ){
-            matrixInputs[i].remove();
-        }    
+    for (i = matrixForm.elements.length - 1; i > -1; i--) {
+        if (matrixForm.elements[i].tagName === "INPUT") {
+            matrixForm.elements[i].remove();
+        }
+    } 
+
 }
-
-const getMatrix = () => {
-    axios.get(`${flaskUrl}/inverse`)
-    .then(response => {
-        console.log(response.data);
-    })
-    .catch(error => {
-        console.error("error: ", error)
-    })
-};
 
 btnMakeMatrix.addEventListener("click", (event)=>{
     event.preventDefault();
@@ -79,12 +89,9 @@ btnMakeMatrix.addEventListener("click", (event)=>{
     createMatrix();
 });
 
-
-
-
 matrixForm.addEventListener("submit", (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
-
+    console.log(operation)
     // Call the fetchInverseMatrix function to make the request
     fetchInverseMatrix();
 });
@@ -121,29 +128,71 @@ const fetchInverseMatrix = () => {
 
 function displayMatrix (json){
     console.log(json);
+        // empties the old answer 
+    answer.innerHTML = '';
 
+    let matrixContainer = document.createElement("div");
+    matrixContainer.classList.add("matrix-container");
+    answer.appendChild(matrixContainer);
 
-  
-        // Access the value corresponding to the key
-        // let value = json[key];
-        matrixTable = document.createElement("table")
-        matrixTable.style.borderSpacing = "10px 15px";
-        answer.appendChild(matrixTable)
+    matrixTable = document.createElement("div")
+    matrixTable.classList.add("row", "justify-content-center", "matrix-table");
+    matrixContainer.appendChild(matrixTable);
 
-        for ( i = 1; i<Number(rows.value) + 1; i++){
-            let newTableRow = document.createElement("tr");
-            matrixTable.appendChild(newTableRow);
+    for ( i = 1; i<Number(rows.value) + 1; i++){
+        let newTableRow = document.createElement("div");
+        newTableRow.classList.add("row", "mb-3");
+        matrixTable.appendChild(newTableRow);
 
-            for (j=1; j<Number(columns.value) + 1; j++){
-                let key = `a${i}-${j}`;
-                let value = json[key];
+        for (j=1; j<Number(columns.value) + 1; j++){
+            const key = `a${i}-${j}`;
+            const value = json[key];
                 
-                let newTableData = document.createElement("td");
-                newTableData.textContent = value; 
-
-                newTableRow.appendChild(newTableData);        
-            }
+            let newTableData = document.createElement("div");
+            newTableData.classList.add("col", "text-center", "matrix-cell");
+            newTableData.textContent = value; 
+            newTableRow.appendChild(newTableData);        
         }
+    }
 }
+
+function displaySingleValueAnswer(json){
+    console.log(json)
+    answer.innerHTML = '';
+
+    let text = document.createElement("p");
+    text.textContent = json["determinant_answer"];
+    console.log(text.textContent)
+}
+
+
+const fetchDeterminantMatrix = () => {
+    const formData = new FormData(document.getElementById('matrix-form'));
+
+    const data = Object.fromEntries(formData)
+
+    fetch('/determinant_calculation', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Process the JSON data (inverse matrix)
+        displaySingleValueAnswer(data);
+
+        // Update the HTML elements on the page to display the calculated matrix
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+};
 
 btnClear.addEventListener("click", clearMatrix);

@@ -52,9 +52,7 @@ def processing_columns(rows_and_columns):
 
 
 
-def determinant_calculation(matrix):
-    rows = 3 
-    columns = 3 
+def determinant_calculation(matrix, rows, columns):
     array_list =[]
 
     for i in matrix:
@@ -79,11 +77,18 @@ def transpose_calculation(matrix):
 
 @app.route("/", methods = ["GET", "POST"])
 def operation ():
+
     if request.method == "POST":
         print (request.form["operation"])
 
         if request.form["operation"] == "inverse":
             return redirect(url_for("inverse"))
+        
+        elif request.form["operation"] == "determinant":
+            return redirect(url_for("determinant"))
+        
+        elif request.form["operation"] == "transpose":
+            return redirect(url_for("transpose"))
     
     return render_template ("home1.html")
 
@@ -108,27 +113,30 @@ def inverse():
     
 @app.route("/inverse_calculation", methods = ["GET","POST"])
 def display_inverse():
-    calculate = request.form.get("calculate")
-    clear = request.form.get("clear")
     if request.method == "POST":
-        print("POST METHOD")
+        print("inverse")
         matrix_form_dictionary = byte_string_to_json(request.data)
         print(matrix_form_dictionary)
-        inverse_matrix = inverse_calculation(matrix_form_dictionary,session.get("rows"),session.get("columns"))
+        inverse_matrix = inverse_calculation(matrix_form_dictionary, session.get("rows"), session.get("columns"))
         print(inverse_matrix)
         inverse_json = np_array_to_json(inverse_matrix)
         print(jsonify(inverse_json))
-        return jsonify(inverse_json)
-    elif request.method == "GET":
-        print("GET")
+        return jsonify(inverse_json)   
 
-
-
-@app.route("/determinant", methods = ["POST"])
+@app.route("/determinant", methods = ["GET","POST"])
 def determinant():
-    print (request.method)
+    if request.method == "GET":
+        return render_template("determinant.html")
+    
+@app.route("/determinant_calculation", methods = ["GET", "POST"] )
+def display_determinant():
+    if request.method == "POST":
+        print("determinant")
+        matrix_form_dictionary = byte_string_to_json(request.data)
+        determinant_value = determinant_calculation(matrix_form_dictionary, session.get("rows"), session.get("columns"))
+        print(determinant_value)
+        return jsonify({"determinant_answer": determinant_value})
         
-
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
 

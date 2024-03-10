@@ -1,4 +1,4 @@
-h1 {
+/* h1 {
     color: blue;
     text-align: center;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -19,33 +19,33 @@ h1 {
     
 
     
-}
+} */
 
-.display {
+/* .display {
     flex:1;
     margin-top: 10px;
-    /* border-radius: 10px; */
+    border-radius: 10px;
     padding: 10% 30% 35% 30%;
     background: grey; 
-}
+} */
 
-.matrix_setting {
+/* .matrix_setting {
    text-align: center;
-}
+} */
 
-.matrix_setting form input{
+/* .matrix_setting form input{
     outline: 0;
     border-radius: 10px;
     margin: 3px;
     width: 50px;
-}
+} */
 
-.matrix_display { 
+/* .matrix_display { 
     margin-top: 0px;
     margin-bottom: 50px;
-} 
+}  */
 
-.matrix_display form input{
+/* .matrix_display form input{
     border: 0;
     outline: 10px;
     width: 25px;
@@ -53,10 +53,25 @@ h1 {
     margin: 5px;
     text-align: center;
     box-shadow: -5px -5px 5px ;
-}
+} */
 
-button{
+/* button{
     margin: 50px;
 
+} */
+
+/* body {
+    background-color: black;
+}  */
+
+.matrix-container {
+    border: 1px solid #000;
+    padding: 10px;
+    margin-bottom: 20px;
 }
 
+.matrix-cell {
+    /* border: 1px solid #000; */
+    /* padding: 10px; */
+    margin: 0 3px;
+}
