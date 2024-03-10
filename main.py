@@ -62,9 +62,7 @@ def determinant_calculation(matrix, rows, columns):
     return (det(matrix))
 
 # function that transpose a matrix using numpy
-def transpose_calculation(matrix):
-    rows = 3 
-    columns = 3 
+def transpose_calculation(matrix, rows, columns):
     array_list =[]
 
     for i in matrix:
@@ -74,6 +72,23 @@ def transpose_calculation(matrix):
     return (np.transpose(matrix))
 
 # make a function that creates the matrix by user input 
+
+@app.route("/transpose", methods = ["GET","POST"])
+def transpose():
+    if request.method == "GET":
+        return render_template("transpose.html")
+
+@app.route("/transpose_calculation", methods = ["GET","POST"])
+def display_transpose():
+    if request.method == "POST":
+        matrix_form_dictionary = byte_string_to_json(request.data)
+        print(matrix_form_dictionary)
+        transpose_matrix = transpose_calculation(matrix_form_dictionary, session.get("rows"), session.get("columns"))
+        print(transpose_matrix)
+        transpose_json = np_array_to_json(transpose_matrix)
+        print(jsonify(transpose_json))
+        return jsonify(transpose_json)
+       
 
 @app.route("/", methods = ["GET", "POST"])
 def operation ():
